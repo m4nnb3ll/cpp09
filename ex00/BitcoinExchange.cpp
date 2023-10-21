@@ -1,14 +1,18 @@
 #include "BitcoinExchange.hpp"
 
-BitcoinExchange::BitcoinExchange()
-	: m_db(nullptr)
-{
-	BitcoinExchange::readDataBase();
-}
+BitcoinExchange::BitcoinExchange() { this->readDataBase(); }
 
-BitcoinExchange::~BitcoinExchange()
+BitcoinExchange::~BitcoinExchange() { }
+
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& o)
 {
-	delete m_db;
+	this->operator=(o);
+}
+BitcoinExchange&	BitcoinExchange::operator=(const BitcoinExchange& o)
+{
+	if (this != &o)
+		this->m_db = o.m_db;
+	return (*this);
 }
 
 bool	BitcoinExchange::checkMonthDay(std::istringstream& ss)
@@ -30,8 +34,7 @@ void	BitcoinExchange::checkDate(std::istringstream& ss)
 	char				delim;
 
 	if (!std::getline(ss, str, '|')
-		|| ss.str().find('|') == std::string::npos
-		|| str.empty())
+		|| (ss.str().find('|') == std::string::npos) || str.empty())
 	{
 		std::ostringstream	tmp;
 		tmp << "Error: bad input.=> " << ss.str();
@@ -85,14 +88,14 @@ void	BitcoinExchange::exchange(const char* fileName)
 			BitcoinExchange::checkInputLine(line);
 			std::istringstream	lineStream(line);
 			std::getline(lineStream, tmpKey, '|');
-			if (m_db->find(tmpKey) == m_db->end())
+			if (m_db.find(tmpKey) == m_db.end())
 			{
-				it = m_db->lower_bound(tmpKey);//std::prev(
-				it = (it == m_db->begin()) ? it : std::prev(it);
+				it = m_db.lower_bound(tmpKey);
+				it = (it == m_db.begin()) ? it : std::prev(it);
 				tmpKey = it->first;
 			}
 			lineStream >> tmpValue;
-			std::cout << tmpKey << " => " << tmpValue << " = " << (*m_db)[tmpKey] * tmpValue << std::endl;
+			std::cout << tmpKey << " => " << tmpValue << " = " << m_db[tmpKey] * tmpValue << std::endl;
 		}
 		catch (std::exception& e)
 		{
@@ -101,7 +104,7 @@ void	BitcoinExchange::exchange(const char* fileName)
 	}
 }
 
-std::map<std::string, float>*	BitcoinExchange::readDataBase()
+void	BitcoinExchange::readDataBase()
 {
 	std::string							line, tmpKey;
 	float								tmpValue;
@@ -113,7 +116,6 @@ std::map<std::string, float>*	BitcoinExchange::readDataBase()
 	if (!std::getline(inputFile, line)
 		|| line != "date,exchange_rate")
 		throw(std::runtime_error("Please provide a valid data file!"));
-	m_db = new std::map<std::string, float>;
 	while (std::getline(inputFile, line))
 	{
 		try
@@ -121,12 +123,11 @@ std::map<std::string, float>*	BitcoinExchange::readDataBase()
 			std::istringstream	lineStream(line);
 			std::getline(lineStream, tmpKey, ',');
 			lineStream >> tmpValue;
-			(*m_db).insert(std::make_pair(tmpKey, tmpValue));
+			m_db.insert(std::make_pair(tmpKey, tmpValue));
 		}
 		catch (std::exception& e)
 		{
 			std::cerr << e.what() << std::endl;
 		}
 	}
-	return (m_db);
 }

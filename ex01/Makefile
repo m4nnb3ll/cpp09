@@ -1,16 +1,13 @@
 NAME = RPN
 
 CC = c++
-CFLAGS = -Wall -Werror -Wextra -std=c++98 -g
+CXXFLAGS = -Wall -Werror -Wextra -std=c++98
 
 SRCS = main.cpp RPN.cpp
 OBJS = $(SRCS:.cpp=.o)
 
-%.o:%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
-
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) -fsanitize=address -o $(NAME)
+	$(CC) $(OBJS) -o $(NAME)
 
 all: $(NAME)
 

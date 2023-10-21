@@ -1,11 +1,5 @@
 #include <iostream>
-#include <fstream>
 #include <sstream>
-#include <map>
-#include <string>
-#include <stdio.h>
-#include <cmath>
-#include <cctype>
 #include <stack>
 
 #define ASCII_RED "\x1B[31m"
@@ -17,10 +11,12 @@ public:
 	RPN();
 	RPN(std::string input);
 	~RPN();
-	int	getResult();
+	RPN(const RPN& o);
+	RPN&		operator=(const RPN& o);
+	int			getResult();
 	static void	printError(const std::string& str);
 private:
-	std::stack<std::string>*	m_stack;
+	std::stack<std::string>	m_stack;
 	void		fillStack(std::istringstream& iss);
 	static int	calc(std::stack<std::string>& stack);
 	static bool	isValid(const std::string& input);

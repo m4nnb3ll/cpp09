@@ -1,22 +1,34 @@
 #include "RPN.hpp"
 
-RPN::RPN() : m_stack(new std::stack<std::string>) {}
+RPN::RPN() {}
 
-RPN::RPN(std::string input) : m_stack(new std::stack<std::string>)
+RPN::RPN(std::string input)
 {
 	std::istringstream iss(input);
 
 	RPN::fillStack(iss);
 }
 
-RPN::~RPN() { delete m_stack; }
+RPN::~RPN() { }
+
+RPN::RPN(const RPN& o)
+{
+	this->operator=(o);
+}
+
+RPN&	RPN::operator=(const RPN& o)
+{
+	if (this != &o)
+		this -> m_stack = o.m_stack;
+	return (*this);
+}
 
 int	RPN::getResult()
 {
 	int	res = 0;
 
-	res = RPN::calc(*m_stack);
-	if (!m_stack->empty())
+	res = RPN::calc(m_stack);
+	if (!m_stack.empty())
 		throw(std::runtime_error("Error: bad RPN format"));
 	return (res);
 }
@@ -86,7 +98,7 @@ void	RPN::fillStack(std::istringstream& iss)
 	{
 		if (!isValid(token))
 			throw(std::runtime_error("Error: Invalid Token!"));
-		m_stack->push(token);
+		m_stack.push(token);
 	}
 }
 

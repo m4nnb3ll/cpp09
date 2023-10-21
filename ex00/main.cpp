@@ -2,15 +2,16 @@
 
 int main(int argc, char **argv)
 {
-	BitcoinExchange	test;
 	if (argc != 2)
-		(printf("invalid args!\n"), exit(1));
+		return (42);
 	try
 	{
+		BitcoinExchange	test;
 		test.exchange(argv[1]);
 	}
 	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 	}
+	return (0);
 }
